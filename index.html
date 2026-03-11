@@ -33,11 +33,21 @@
             border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 1000; transition: all 0.3s;
         }
         .nav-container { display: flex; justify-content: space-between; align-items: center; height: 80px; }
-        .logo { font-family: var(--font-title); font-size: 2.2rem; color: var(--text-light); text-decoration: none; text-transform: uppercase; letter-spacing: 2px; }
+        .logo { font-family: var(--font-title); font-size: 2.2rem; color: var(--text-light); text-decoration: none; text-transform: uppercase; letter-spacing: 2px; z-index: 1001; }
         .logo span { color: var(--primary-color); }
+        
         .nav-links { display: flex; list-style: none; gap: 2rem; }
         .nav-links a { text-decoration: none; color: var(--text-light); font-weight: 500; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; transition: color 0.3s; }
         .nav-links a:hover { color: var(--primary-color); }
+
+        /* Menú Hamburguesa (Oculto en PC) */
+        .menu-toggle {
+            display: none; flex-direction: column; cursor: pointer; gap: 6px; z-index: 1001;
+        }
+        .menu-toggle .bar {
+            width: 30px; height: 3px; background-color: var(--text-light); border-radius: 3px;
+            transition: all 0.3s ease-in-out;
+        }
 
         /* Hero Section */
         .hero {
@@ -116,7 +126,6 @@
         
         .map-box { flex: 2; min-width: 300px; height: 350px; border-radius: 10px; overflow: hidden; border: 1px solid #333; background: #222; }
         
-        /* FILTRO MÁGICO PARA HACER EL MAPA OSCURO */
         .map-box iframe { 
             width: 100%; 
             height: 100%; 
@@ -146,9 +155,31 @@
         /* Responsividad Móvil */
         @media (max-width: 900px) {
             .hero-content h1 { font-size: 3.5rem; }
-            .nav-links { display: none; }
             .price-card.featured { transform: scale(1); }
             .price-card.featured:hover { transform: scale(1) translateY(-10px); }
+            
+            /* --- ESTILOS DEL MENÚ MÓVIL --- */
+            .menu-toggle { display: flex; }
+            
+            .nav-links {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100vh;
+                background-color: rgba(10, 10, 10, 0.98);
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                transition: left 0.4s ease;
+            }
+            .nav-links.active { left: 0; }
+            .nav-links a { font-size: 1.5rem; }
+            
+            /* Animación de la X */
+            .menu-toggle.is-active .bar:nth-child(2) { opacity: 0; }
+            .menu-toggle.is-active .bar:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+            .menu-toggle.is-active .bar:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
         }
     </style>
 </head>
@@ -157,10 +188,17 @@
     <nav class="navbar" id="navbar">
         <div class="container nav-container">
             <a href="#" class="logo">Titanium<span>Fit</span></a>
-            <ul class="nav-links">
-                <li><a href="#disciplinas">Disciplinas</a></li>
-                <li><a href="#planes">Planes</a></li>
-                <li><a href="#ubicacion">Ubicación</a></li>
+            
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#disciplinas" class="nav-link">Disciplinas</a></li>
+                <li><a href="#planes" class="nav-link">Planes</a></li>
+                <li><a href="#ubicacion" class="nav-link">Ubicación</a></li>
             </ul>
         </div>
     </nav>
@@ -305,6 +343,25 @@
                 navbar.style.boxShadow = 'none';
                 navbar.style.backgroundColor = 'rgba(10, 10, 10, 0.95)';
             }
+        });
+
+        // --- LÓGICA DEL MENÚ MÓVIL (Hamburguesa) ---
+        const menuToggle = document.getElementById('mobile-menu');
+        const navLinks = document.getElementById('nav-links');
+        const navItems = document.querySelectorAll('.nav-link');
+
+        // Abrir/Cerrar al tocar la hamburguesa
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('is-active');
+            navLinks.classList.toggle('active');
+        });
+
+        // Cerrar el menú automáticamente al tocar un enlace
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                menuToggle.classList.remove('is-active');
+                navLinks.classList.remove('active');
+            });
         });
     </script>
 </body>
